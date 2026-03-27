@@ -1,0 +1,8 @@
+flask
+twilio
+anthropic
+supabase
+python-dotenv
+gunicorn
+requests
+beautifulsoup4

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RaitaRanga — ರೈತರ ರಂಗ | Tomato Farm AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans:wght@400;500&family=Noto+Sans+Kannada:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #25D366;
+    --green-dark: #128C7E;
+    --green-light: #DCF8C6;
+    --bg: #0e1117;
+    --bg2: #161b22;
+    --bg3: #1c2330;
+    --border: rgba(255,255,255,0.07);
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #58a6ff;
+    --red: #f85149;
+    --amber: #d29922;
+    --teal: #3fb950;
+    --chat-bg: #0b141a;
+    --bubble-in: #202c33;
+    --bubble-out: #005c4b;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans Kannada', 'Noto Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg2);
+  }
+  .logo {
+    width: 40px; height: 40px;
+    background: var(--green-dark);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--text);
+  }
+  .header-text p { font-size: 12px; color: var(--text2); }
+  .header-badge {
+    margin-left: auto;
+    background: rgba(37,211,102,0.15);
+    color: var(--green);
+    font-size: 11px; font-weight: 500;
+    padding: 4px 10px; border-radius: 99px;
+    border: 1px solid rgba(37,211,102,0.3);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 340px 1fr 300px;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 73px);
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-title {
+    padding: 16px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .scenarios { overflow-y: auto; flex: 1; padding: 12px; }
+  .scenario-card {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    transition: all .2s;
+  }
+  .scenario-card:hover { border-color: rgba(37,211,102,0.4); background: rgba(37,211,102,0.05); }
+  .scenario-card.active { border-color: var(--green); background: rgba(37,211,102,0.08); }
+  .sc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .sc-tag {
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px;
+    letter-spacing: .05em; text-transform: uppercase;
+  }
+  .tag-harvest { background: rgba(37,211,102,0.2); color: var(--teal); }
+  .tag-disease { background: rgba(248,81,73,0.2); color: var(--red); }
+  .tag-forecast { background: rgba(88,166,255,0.2); color: var(--accent); }
+  .tag-market { background: rgba(210,153,34,0.2); color: var(--amber); }
+  .tag-general { background: rgba(139,148,158,0.2); color: var(--text2); }
+  .sc-title { font-size: 13px; font-weight: 500; color: var(--text); }
+  .sc-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+  /* CHAT PANEL */
+  .chat-panel {
+    display: flex; flex-direction: column;
+    background: var(--chat-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    position: relative;
+  }
+  .chat-topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .farmer-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #2d6a4f, #40916c);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .farmer-name { font-size: 14px; font-weight: 500; }
+  .farmer-status { font-size: 12px; color: var(--teal); }
+  .typing-indicator {
+    display: none;
+    align-items: center; gap: 6px;
+    padding: 6px 14px;
+    color: var(--text2); font-size: 12px;
+    font-style: italic;
+  }
+  .typing-indicator.show { display: flex; }
+  .dot-pulse span {
+    display: inline-block; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--text2);
+    animation: pulse 1.2s infinite;
+  }
+  .dot-pulse span:nth-child(2) { animation-delay: .2s; }
+  .dot-pulse span:nth-child(3) { animation-delay: .4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:.3;transform:scale(.8)} 40%{opacity:1;transform:scale(1)} }
+
+  .messages {
+    flex: 1; overflow-y: auto;
+    padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .msg { display: flex; flex-direction: column; max-width: 72%; }
+  .msg.out { align-self: flex-end; align-items: flex-end; }
+  .msg.in { align-self: flex-start; align-items: flex-start; }
+  .bubble {
+    padding: 9px 13px;
+    border-radius: 10px;
+    font-size: 13.5px; line-height: 1.6;
+    position: relative; word-break: break-word;
+    white-space: pre-wrap;
+  }
+  .msg.out .bubble {
+    background: var(--bubble-out);
+    border-bottom-right-radius: 3px;
+    color: #e9f5f0;
+  }
+  .msg.in .bubble {
+    background: var(--bubble-in);
+    border-bottom-left-radius: 3px;
+    color: var(--text);
+  }
+  .msg-time { font-size: 10px; color: var(--text2); margin-top: 3px; padding: 0 4px; }
+  .msg-sender { font-size: 11px; color: var(--green); margin-bottom: 2px; font-weight: 500; }
+
+  .date-divider {
+    text-align: center; font-size: 11px;
+    color: var(--text2);
+    background: rgba(0,0,0,0.3);
+    padding: 4px 12px; border-radius: 99px;
+    align-self: center; margin: 8px 0;
+  }
+
+  .chat-input-area {
+    padding: 12px 16px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: center;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1; background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 22px; padding: 10px 16px;
+    color: var(--text); font-size: 13px; font-family: inherit;
+    outline: none; resize: none;
+  }
+  .chat-input:focus { border-color: rgba(37,211,102,0.4); }
+  .send-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--green-dark); border: none;
+    color: white; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .send-btn:hover { background: var(--green); }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .code-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .code-tab {
+    padding: 10px 14px; font-size: 11px; font-weight: 500;
+    color: var(--text2); cursor: pointer; border: none;
+    background: none; border-bottom: 2px solid transparent;
+    transition: all .2s; white-space: nowrap;
+  }
+  .code-tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .code-panel { display: none; flex: 1; overflow-y: auto; padding: 14px; }
+  .code-panel.active { display: block; }
+  pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px; line-height: 1.6;
+    color: #c9d1d9; background: var(--bg3);
+    border-radius: 8px; padding: 14px;
+    overflow-x: auto; white-space: pre;
+    border: 1px solid var(--border);
+  }
+  .kw { color: #ff7b72; }
+  .str { color: #a5d6ff; }
+  .cmt { color: #6e7681; }
+  .fn { color: #d2a8ff; }
+  .num { color: #79c0ff; }
+  .var { color: #ffa657; }
+
+  .info-box {
+    background: var(--bg3); border-radius: 8px;
+    padding: 12px 14px; margin-bottom: 10px;
+    border: 1px solid var(--border); font-size: 11px;
+    color: var(--text2); line-height: 1.6;
+  }
+  .info-box strong { color: var(--text); display: block; margin-bottom:4px; font-size:12px; }
+  .step-list { list-style: none; }
+  .step-list li {
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 11px; color: var(--text2); display: flex; gap: 8px;
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--green-dark); color: white;
+    font-size: 9px; font-weight: 600; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🌱</div>
+  <div class="header-text">
+    <h1>RaitaRanga — ರೈತರ ರಂಗ</h1>
+    <p>WhatsApp bot simulator + production code for Karnataka greenhouse farmers</p>
+  </div>
+  <div class="header-badge">● Live Demo</div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: Scenarios -->
+  <div class="left-panel">
+    <div class="panel-title">ಸನ್ನಿವೇಶ ಆಯ್ಕೆ ಮಾಡಿ / Select a scenario</div>
+    <div class="scenarios" id="scenarios"></div>
+  </div>
+
+  <!-- CENTER: WhatsApp Chat -->
+  <div class="chat-panel">
+    <div class="chat-topbar">
+      <div class="farmer-avatar">👨‍🌾</div>
+      <div>
+        <div class="farmer-name">ಸುರೇಶ್ ಗೌಡ (Suresh Gowda)</div>
+        <div class="farmer-status">online</div>
+      </div>
+    </div>
+    <div class="messages" id="messages">
+      <div class="date-divider">ಇಂದು / Today</div>
+      <div class="msg in">
+        <div class="msg-sender">RaitaRanga 🌱</div>
+        <div class="bubble">ನಮಸ್ಕಾರ ಸುರೇಶ್ ಅವರೇ! 🙏
+Namaskara Suresh avare!
+
+ನಾನು ನಿಮ್ಮ RaitaRanga — ಕೋಲಾರ್ ತಳಿ ಟೊಮ್ಯಾಟೊ ಹಸಿರುಮನೆಯ AI ಸಹಾಯಕ.
+Naanu nimage RaitaRanga — your tomato greenhouse AI assistant.
+
+ನಾನು ಇದರಲ್ಲಿ ಸಹಾಯ ಮಾಡಬಲ್ಲೆ / I can help with:
+🍅 *ಕೊಯ್ಲು ಸಿದ್ಧತೆ* — ಇಂದು ಯಾವ ಸಾಲುಗಳನ್ನು ಕೊಯ್ಯಬೇಕು
+🔍 *ರೋಗ ಪತ್ತೆ* — ಫೋಟೋ ಕಳಿಸಿ
+📈 *ಇಳುವರಿ ಅಂದಾಜು* — ಮುಂದಿನ 7 & 14 ದಿನಗಳು
+💰 *ಮಂಡಿ ದರ* — ಇಂದಿನ Kolar APMC ಬೆಲೆ
+📊 *ವಾರದ ವರದಿ* — ಸಂಪೂರ್ಣ ತೋಟ ವಿಶ್ಲೇಷಣೆ
+
+ಎಡಗಡೆ ಸನ್ನಿವೇಶ ಆಯ್ಕೆ ಮಾಡಿ ಅಥವಾ ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ!
+Select a scenario on the left or type below!</div>
+        <div class="msg-time">9:00 AM</div>
+      </div>
+    </div>
+    <div class="typing-indicator" id="typing">
+      <span>RaitaRanga ಟೈಪ್ ಮಾಡುತ್ತಿದೆ / typing...</span>
+      <div class="dot-pulse"><span></span><span></span><span></span></div>
+    </div>
+    <div class="chat-input-area">
+      <label class="send-btn" style="cursor:pointer;background:var(--bg3);border:1px solid var(--border);font-size:14px;" title="ರೋಗ ಪತ್ತೆಗಾಗಿ ಸಸ್ಯ ಫೋಟೋ ಕಳಿಸಿ / Send plant photo for disease detection">
+        📷<input type="file" id="photoInput" accept="image/*" style="display:none" onchange="sendPhoto(this)">
+      </label>
+      <input class="chat-input" id="userInput" placeholder="ಸಂದೇಶ ಟೈಪ್ ಮಾಡಿ / Type a message..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Code -->
+  <div class="right-panel">
+    <div class="code-tabs">
+      <button class="code-tab active" onclick="showTab('setup',this)">Setup</button>
+      <button class="code-tab" onclick="showTab('webhook',this)">Webhook</button>
+      <button class="code-tab" onclick="showTab('claude',this)">Claude AI</button>
+      <button class="code-tab" onclick="showTab('deploy',this)">Deploy</button>
+      <button class="code-tab" onclick="showTab('helpers',this)">Helpers</button>
+    </div>
+
+    <div class="code-panel active" id="tab-setup">
+      <div class="info-box">
+        <strong>What you need to build RaitaRanga</strong>
+        Total cost: ~₹3,000/month at 100 farmers. Stack is 100% free to start.
+      </div>
+      <pre><span class="cmt"># RaitaRanga — Full Stack</span>
+<span class="cmt"># ──────────────────────</span>
+<span class="cmt"># WhatsApp: Twilio Sandbox (free)</span>
+<span class="cmt"># AI Brain: Claude API (Anthropic)</span>
+<span class="cmt"># Server:   Python + Flask</span>
+<span class="cmt"># Hosting:  Render.com (free tier)</span>
+<span class="cmt"># DB:       Supabase (free tier)</span>
+
+<span class="cmt"># 1. Install dependencies</span>
+<span class="kw">pip install</span> flask twilio anthropic \
+            supabase python-dotenv gunicorn
+
+<span class="cmt"># 2. Project structure</span>
+raitaranga/
+├── app.py          <span class="cmt"># Main Flask app</span>
+├── claude_agent.py <span class="cmt"># AI logic</span>
+├── farm_data.py    <span class="cmt"># Farm state manager</span>
+├── mandi_prices.py <span class="cmt"># Price fetcher</span>
+├── render.yaml     <span class="cmt"># Render config</span>
+├── .env            <span class="cmt"># API keys (local only)</span>
+└── requirements.txt
+
+<span class="cmt"># 3. .env file</span>
+<span class="var">ANTHROPIC_API_KEY</span>=sk-ant-...
+<span class="var">TWILIO_ACCOUNT_SID</span>=ACxxxxx
+<span class="var">TWILIO_AUTH_TOKEN</span>=xxxxxxx
+<span class="var">TWILIO_WHATSAPP_FROM</span>=whatsapp:+14155238886
+<span class="var">SUPABASE_URL</span>=https://xxx.supabase.co
+<span class="var">SUPABASE_KEY</span>=eyJxxx...
+
+<span class="cmt"># 4. render.yaml (commit this to repo)</span>
+services:
+  - type: web
+    name: raitaranga
+    runtime: python
+    buildCommand: <span class="str">"pip install -r requirements.txt"</span>
+    startCommand: <span class="str">"gunicorn app:app"</span>
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: <span class="kw">false</span>
+      - key: TWILIO_ACCOUNT_SID
+        sync: <span class="kw">false</span></pre>
+
+      <div class="info-box" style="margin-top:10px">
+        <strong>Monthly cost estimate (100 farmers)</strong>
+        Claude API: ~₹1,800 · Twilio: ~₹800 · Render: Free · Supabase: Free · Total: ~₹2,600/month
+      </div>
+    </div>
+
+    <div class="code-panel" id="tab-webhook">
+      <pre><span class="cmt"># app.py — Flask webhook</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, request
+<span class="kw">from</span> twilio.rest <span class="kw">import</span> Client
+<span class="kw">from</span> claude_agent <span class="kw">import</span> get_ai_response
+<span class="kw">from</span> farm_data <span class="kw">import</span> get_or_create_farm
+<span class="kw">import</span> os, base64
+
+app = Flask(__name__)
+twilio_client = Client(
+    os.environ[<span class="str">'TWILIO_ACCOUNT_SID'</span>],
+    os.environ[<span class="str">'TWILIO_AUTH_TOKEN'</span>]
+)
+
+<span class="fn">@app.route</span>(<span class="str">'/webhook'</span>, methods=[<span class="str">'POST'</span>])
+<span class="kw">def</span> <span class="fn">whatsapp_webhook</span>():
+    phone     = request.form.get(<span class="str">'From'</span>)
+    msg_body  = request.form.get(<span class="str">'Body'</span>, <span class="str">''</span>).strip()
+    media_url = request.form.get(<span class="str">'MediaUrl0'</span>)
+    num_media = int(request.form.get(<span class="str">'NumMedia'</span>, <span class="num">0</span>))
+
+    <span class="kw">if not</span> phone:
+        <span class="kw">return</span> {<span class="str">'error'</span>: <span class="str">'Missing From'</span>}, <span class="num">400</span>
+
+    farm = get_or_create_farm(phone)
+
+    image_b64 = <span class="kw">None</span>
+    <span class="kw">if</span> num_media > <span class="num">0</span> <span class="kw">and</span> media_url:
+        image_b64 = fetch_image_as_b64(media_url)
+
+    reply = get_ai_response(
+        farmer_phone=phone,
+        message=msg_body,
+        farm_data=farm,
+        image_b64=image_b64
+    )
+
+    twilio_client.messages.create(
+        from_=os.environ[<span class="str">'TWILIO_WHATSAPP_FROM'</span>],
+        to=phone, body=reply
+    )
+    <span class="kw">return</span> <span class="str">''</span>, <span class="num">204</span>
+
+<span class="kw">def</span> <span class="fn">fetch_image_as_b64</span>(url):
+    <span class="kw">import</span> requests
+    auth = (os.environ[<span class="str">'TWILIO_ACCOUNT_SID'</span>],
+            os.environ[<span class="str">'TWILIO_AUTH_TOKEN'</span>])
+    r = requests.get(url, auth=auth, timeout=<span class="num">10</span>)
+    r.raise_for_status()
+    <span class="kw">return</span> base64.b64encode(r.content).decode()
+
+<span class="fn">@app.route</span>(<span class="str">'/health'</span>)
+<span class="kw">def</span> <span class="fn">health</span>(): <span class="kw">return</span> {<span class="str">'status'</span>: <span class="str">'ok'</span>}, <span class="num">200</span>
+
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    app.run(debug=<span class="kw">True</span>, port=<span class="num">5000</span>)</pre>
+    </div>
+
+    <div class="code-panel" id="tab-claude">
+      <pre><span class="cmt"># claude_agent.py — AI brain</span>
+<span class="kw">import</span> anthropic_lib <span class="kw">as</span> anthropic
+<span class="kw">import</span> json, os
+
+SYSTEM_PROMPT = <span class="str">"""
+You are RaitaRanga (ರೈತರ ರಂಗ), an expert AI
+assistant for Karnataka tomato greenhouse farmers.
+You are warm, practical, and speak simply.
+
+LANGUAGE: Always reply in Kannada + English mixed.
+Write the key advice in both languages.
+Use Kannada script for greetings and key terms.
+Example: "ನಾಳೆ Row 3 ಕೊಯ್ಯಿರಿ (Harvest Row 3 tomorrow)"
+
+For EVERY response include:
+1. Direct answer — Kannada first, then English
+2. One action to take TODAY (ಇಂದೇ ಮಾಡಿ)
+3. A tip to improve yield or reduce cost
+
+WhatsApp format:
+- Use *bold* for key numbers and actions
+- Emojis naturally
+- Under 200 words
+- End with a helpful follow-up offer
+
+Farm context in JSON.
+For disease images: name, severity 1-10, treatment.
+"""</span>
+
+<span class="kw">def</span> <span class="fn">get_ai_response</span>(farmer_phone, message,
+                      farm_data, image_b64=<span class="kw">None</span>):
+    client = anthropic.Anthropic(
+        api_key=os.environ.get(<span class="str">'ANTHROPIC_API_KEY'</span>)
+    )
+    farm_ctx = json.dumps({
+        <span class="str">"farm_name"</span>: farm_data.get(<span class="str">'name'</span>),
+        <span class="str">"location"</span>: farm_data.get(<span class="str">'location'</span>),
+        <span class="str">"size_sqm"</span>: farm_data.get(<span class="str">'size_sqm'</span>),
+        <span class="str">"rows"</span>: farm_data.get(<span class="str">'rows'</span>),
+        <span class="str">"variety"</span>: farm_data.get(<span class="str">'tomato_variety'</span>),
+        <span class="str">"days_since_planting"</span>: farm_data.get(<span class="str">'days'</span>),
+        <span class="str">"last_harvest_kg"</span>: farm_data.get(<span class="str">'last_kg'</span>),
+        <span class="str">"mandi_price_kg"</span>: farm_data.get(<span class="str">'price'</span>),
+        <span class="str">"weather"</span>: farm_data.get(<span class="str">'weather'</span>),
+    }, indent=<span class="num">2</span>)
+
+    content = [{
+        <span class="str">"type"</span>: <span class="str">"text"</span>,
+        <span class="str">"text"</span>: <span class="str">f"Farm:\n{farm_ctx}\n\nMessage: {message}"</span>
+    }]
+    <span class="kw">if</span> image_b64:
+        content.insert(<span class="num">0</span>, {
+            <span class="str">"type"</span>: <span class="str">"image"</span>,
+            <span class="str">"source"</span>: {<span class="str">"type"</span>: <span class="str">"base64"</span>,
+                        <span class="str">"media_type"</span>: <span class="str">"image/jpeg"</span>,
+                        <span class="str">"data"</span>: image_b64}
+        })
+
+    <span class="kw">try</span>:
+        resp = client.messages.create(
+            model=<span class="str">"claude-sonnet-4-20250514"</span>,
+            max_tokens=<span class="num">500</span>,
+            system=SYSTEM_PROMPT,
+            messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>,
+                       <span class="str">"content"</span>: content}]
+        )
+        <span class="kw">return</span> resp.content[<span class="num">0</span>].text
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="kw">return</span> (<span class="str">"ತಾಂತ್ರಿಕ ಸಮಸ್ಯೆ ಆಗಿದೆ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.\n"</span>
+                <span class="str">"Technical issue, please try again. 🙏"</span>)</pre>
+    </div>
+
+    <div class="code-panel" id="tab-deploy">
+      <div class="info-box">
+        <strong>30 ನಿಮಿಷದಲ್ಲಿ Deploy ಮಾಡಿ / Deploy in 30 minutes</strong>
+        Zero server knowledge needed.
+      </div>
+      <ul class="step-list">
+        <li><div class="step-num">1</div><div><strong>render.com</strong> ನಲ್ಲಿ ಉಚಿತ account ಮಾಡಿ. GitHub repo connect ಮಾಡಿ. "New Web Service" ಆಯ್ಕೆ ಮಾಡಿ.</div></li>
+        <li><div class="step-num">2</div><div>Render dashboard → "Environment" tab ನಲ್ಲಿ <strong>.env variables</strong> ಹಾಕಿ. Start command: <code style="font-family:monospace;font-size:10px;color:var(--accent)">gunicorn app:app</code></div></li>
+        <li><div class="step-num">3</div><div>ಉಚಿತ <strong>Twilio account</strong> ಮಾಡಿ. WhatsApp Sandbox ತೆರೆಯಿರಿ.</div></li>
+        <li><div class="step-num">4</div><div>Twilio ನಲ್ಲಿ Webhook URL: <code style="font-family:monospace;font-size:10px;color:var(--accent)">https://your-app.onrender.com/webhook</code></div></li>
+        <li><div class="step-num">5</div><div><strong>Anthropic account</strong> — console.anthropic.com — API key ತೆಗೆದುಕೊಳ್ಳಿ.</div></li>
+        <li><div class="step-num">6</div><div>ರೈತರು WhatsApp ನಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ: <code style="font-family:monospace;font-size:10px;color:var(--green)">join &lt;sandbox-word&gt;</code></div></li>
+        <li><div class="step-num">7</div><div>Production ಗಾಗಿ: Twilio WhatsApp Business API apply ಮಾಡಿ (2–3 ವಾರ).</div></li>
+        <li><div class="step-num">8</div><div>Morning alerts ಗಾಗಿ: Render dashboard → "New Cron Job" → schedule <code style="font-family:monospace;font-size:10px;color:var(--green)">0 0 30 * * *</code> (6 AM IST = 0:30 UTC). ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ಎಲ್ಲಾ ತೋಟಗಳಿಗೆ alert ಕಳಿಸಿ.</div></li>
+      </ul>
+      <div class="info-box" style="margin-top:10px">
+        <strong>Twilio WhatsApp Sandbox — ಉಚಿತ testing</strong>
+        10 phones ವರೆಗೆ instant test ಮಾಡಬಹುದು — ಯಾವುದೇ approval ಬೇಡ. ಕೋಲಾರ್ ನ 2 pilot farms ಗೆ ಪರಿಪೂರ್ಣ.
+      </div>
+    </div>
+
+    <div class="code-panel" id="tab-helpers">
+      <pre><span class="cmt"># mandi_prices.py — Live APMC rates</span>
+<span class="kw">import</span> requests
+
+AGMARKET_URL = <span class="str">"https://agmarknet.gov.in/SearchCmmMkt.aspx"</span>
+
+<span class="kw">def</span> <span class="fn">get_mandi_prices</span>(crop=<span class="str">'Tomato'</span>,
+                      state=<span class="str">'Karnataka'</span>):
+    <span class="kw">try</span>:
+        r = requests.get(AGMARKET_URL, params={
+            <span class="str">'Tx_Commodity'</span>: crop,
+            <span class="str">'Tx_State'</span>: state,
+        }, timeout=<span class="num">5</span>)
+        <span class="kw">return</span> parse_agmarket(r.text)
+    <span class="kw">except</span>:
+        <span class="kw">return</span> {  <span class="cmt"># ಸಂಚಿತ ಬೆಲೆ / cached fallback</span>
+            <span class="str">'Kolar'</span>:     {<span class="str">'A'</span>:<span class="num">18</span>,<span class="str">'B'</span>:<span class="num">14</span>,<span class="str">'C'</span>:<span class="num">9</span>},
+            <span class="str">'Bangalore'</span>: {<span class="str">'A'</span>:<span class="num">22</span>,<span class="str">'B'</span>:<span class="num">17</span>},
+            <span class="str">'Hosur'</span>:     {<span class="str">'A'</span>:<span class="num">19</span>,<span class="str">'B'</span>:<span class="num">15</span>},
+        }</pre>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const now = new Date();
+const timeStr = (offset=0) => {
+  const d = new Date(now.getTime() + offset*60000);
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0') + (d.getHours()<12?' AM':' PM');
+};
+
+const scenarios = [
+  {
+    tag:'harvest', label:'tag-harvest',
+    title:'ಕೊಯ್ಲು ಸಿದ್ಧತೆ / Harvest check',
+    desc:'ಇಂದು ಯಾವ ಸಾಲುಗಳನ್ನು ಕೊಯ್ಯಬೇಕು? / Which rows to pick today?',
+    farmer: 'ಇಂದು ಯಾವ ಸಾಲು ಕೊಯ್ಯಬಹುದು? Row 3 ready ಆಗಿದೆ ಅನ್ನಿಸುತ್ತೆ.',
+    bot: `ನಮಸ್ಕಾರ ಸುರೇಶ್ ಅವರೇ! 🍅 *ಇಂದಿನ ಕೊಯ್ಲು ವರದಿ / Today's harvest report:*
+
+*Row 3, 5, 8 → ಇಂದೇ ಕೊಯ್ಯಿರಿ (READY today)* ✅
+ಅಂದಾಜು ಇಳುವರಿ / Estimated yield: *~48 kg*
+ಕೊಯ್ಯಲು ಉತ್ತಮ ಸಮಯ: *ಬೆಳಿಗ್ಗೆ 6–9* (heat ಮೊದಲು)
+
+Row 1, 2, 4 → 3–4 ದಿನ ಇನ್ನೂ ಬೇಕು 🕐
+Row 6, 7 → 8–10 ದಿನ ಬೇಕು 🌱
+
+*ಇಂದೇ ಮಾಡಿ:* Row 3 ರಿಂದ ಶುರು ಮಾಡಿ — ಅಲ್ಲಿ ಹೆಚ್ಚು ಹಣ್ಣಾಗಿದೆ. 10 AM ಮೊದಲು pick ಮಾಡಿ.
+
+💡 *ಸಲಹೆ:* Kolar APMC ಇಂದು ₹18/kg — ನಾಳೆ ಬೆಳಿಗ್ಗೆ ₹20+ ಆಗಬಹುದು!
+
+ಯಾವುದಾದರು row ಫೋಟೋ ಕಳಿಸಿ? ಖಚಿತಪಡಿಸಿಕೊಳ್ಳೋಣ! 📸`
+  },
+  {
+    tag:'disease', label:'tag-disease',
+    title:'ರೋಗ ಪತ್ತೆ / Disease detection',
+    desc:'ರೋಗಗ್ರಸ್ತ ಎಲೆ ಫೋಟೋ ಕಳಿಸಿದ ರೈತ / Farmer sends sick leaf photo',
+    farmer: '📷 [ಎಲೆ ಫೋಟೋ]\nಈ ಎಲೆಗಳು ಕಪ್ಪಾಗುತ್ತಿವೆ — ಏನು ರೋಗ?',
+    bot: `🔍 *ರೋಗ ವಿಶ್ಲೇಷಣೆ / Disease Analysis — Row 4*
+
+*ರೋಗ: Early Blight* (Alternaria solani)
+ತೀವ್ರತೆ / Severity: *6/10* — 48 ಗಂಟೆಯಲ್ಲಿ ಕ್ರಮ ತೆಗೆಯಿರಿ!
+
+*ಲಕ್ಷಣಗಳು / Symptoms:*
+• ಹಳದಿ ಉಂಗುರದ ಕಪ್ಪು ಚುಕ್ಕೆಗಳು (dark spots with yellow rings)
+• ಕೆಳಗಿನ ಎಲೆಗಳು ಮೊದಲು ತೊಂದರೆ
+• ಹರಡುವ ಲಕ್ಷಣ ಕಾಣುತ್ತಿದೆ
+
+*ಇಂದೇ ಮಾಡಿ / Act today:*
+1️⃣ ರೋಗಗ್ರಸ್ತ ಎಲೆ ತೆಗೆದು bag ನಲ್ಲಿ ಹಾಕಿ
+2️⃣ *Mancozeb 75% WP* ಸಿಂಪಡಿಸಿ — 2g ಪ್ರತಿ ಲೀಟರ್ ನೀರು
+3️⃣ ಗಾಳಿಯಾಡಲು vent ತೆರೆಯಿರಿ
+
+*ವೆಚ್ಚ:* ~₹300 (ಉಪೇಕ್ಷೆ ಮಾಡಿದರೆ ₹8,000+ ನಷ್ಟ)
+
+*ಮುಂದೆ:*
+• Drip ನೀರಾವರಿ ಮಾತ್ರ — overhead ಬೇಡ
+• Row 3 ಕೂಡ ಪರಿಶೀಲಿಸಿ
+
+ನಾಳೆ ಮತ್ತೆ ಫೋಟೋ ಕಳಿಸಿ — ಸ್ಥಿತಿ track ಮಾಡೋಣ! 🌿`
+  },
+  {
+    tag:'forecast', label:'tag-forecast',
+    title:'ಇಳುವರಿ ಮುನ್ಸೂಚನೆ / Yield forecast',
+    desc:'ಕೂಲಿ ಮತ್ತು ಸಾರಿಗೆ ಯೋಜನೆ ಮಾಡಲು ರೈತ / Farmer plans labour & transport',
+    farmer: 'ಮುಂದಿನ ವಾರ ಎಷ್ಟು production ಆಗುತ್ತೆ? ಕೂಲಿ ಹಾಕ್ಕೋಬೇಕು.',
+    bot: `📊 *7 ದಿನದ ಇಳುವರಿ ಅಂದಾಜು / Yield Forecast — Suresh Farm*
+
+| ದಿನ | ಇಳುವರಿ |
+|-----|--------|
+| ನಾಳೆ (Tue) | *52 kg* ✅ |
+| Wed | *38 kg* |
+| Thu | *61 kg* ← peak! |
+| Fri | *45 kg* |
+| Sat | *29 kg* |
+| Sun | *18 kg* |
+| Mon | *55 kg* |
+
+*ಒಟ್ಟು 7 ದಿನ: ~298 kg* 🎉
+
+*ಕೂಲಿ ಯೋಜನೆ / Labour plan:*
+• ಗುರುವಾರ peak ಗೆ *4 extra workers* ಮಾಡಿಕೊಳ್ಳಿ
+• Tue + Thu: ಸಾರಿಗೆ arrange ಮಾಡಿ
+• Weekend ಕಡಿಮೆ — pruning ಮಾಡಿ
+
+*ಬೆಲೆ ಅಂದಾಜು:*
+Kolar: ₹18/kg | Thursday ₹20–22/kg (ಹಬ್ಬದ demand)
+💰 *ಗುರುವಾರ ಕೊಯ್ಲು = ಅತ್ಯುತ್ತಮ ವಾರ!*
+
+Kolar APMC ಸಾರಿಗೆ contact ಬೇಕೇ? 🚛`
+  },
+  {
+    tag:'market', label:'tag-market',
+    title:'ಮಂಡಿ ದರ / Mandi price alert',
+    desc:'ಇಂದಿನ ಉತ್ತಮ ಮಾರುಕಟ್ಟೆ ದರ ಪರಿಶೀಲಿಸಿ / Check today\'s best rates',
+    farmer: 'ಇಂದು ಬೆಲೆ ಎಷ್ಟು? ಎಲ್ಲಿ ಕಳಿಸಲಿ?',
+    bot: `💰 *ಇಂದಿನ ಮಂಡಿ ದರ / Mandi Bhav — ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})}*
+
+*Kolar APMC (ಅತ್ಯಂತ ಹತ್ತಿರ):*
+Grade A: *₹22/kg* ⬆️ (+₹3 ನಿನ್ನೆಗಿಂತ)
+Grade B: *₹16/kg*
+Grade C: *₹9/kg*
+
+*Bangalore (Yeshwanthpur):*
+Grade A: *₹26/kg* 🔥 (ಅತ್ಯಧಿಕ!)
+ಸಾರಿಗೆ ವೆಚ್ಚ: ~₹2.5/kg
+ನಿಜ ಲಾಭ: *₹23.5/kg* ← ಉತ್ತಮ!
+
+*Hosur APMC:*
+Grade A: ₹19/kg | Net: ₹17/kg
+
+*ನನ್ನ ಶಿಫಾರಸು / My recommendation:*
+ಇಂದು Bangalore ಕಳಿಸಿ! ₹26 vs ₹22 = *300kg ಗೆ ₹1,200 ಹೆಚ್ಚು.*
+
+Contact: Yeshwanthpur commission agent
+Ramesh Gowda: *+91 98XXX XXXXX*
+
+ನಾಳೆ ಬೆಳಿಗ್ಗೆ 6 ಗಂಟೆಗೆ ದರ alert ಬೇಕೇ? 🔔`
+  },
+  {
+    tag:'general', label:'tag-general',
+    title:'ವಾರದ ವರದಿ / Weekly report',
+    desc:'ಸಂಪೂರ್ಣ ತೋಟ performance summary',
+    farmer: 'ಈ ವಾರದ summary ಕೊಡಿ.',
+    bot: `📈 *ವಾರದ ವರದಿ / Weekly Report — Suresh Farm*
+*${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})} Summary*
+
+*ಉತ್ಪಾದನೆ / Production:*
+ಕೊಯ್ಲು: *312 kg* (target 280 ✅ +11%)
+ಆದಾಯ: *₹6,552* @ avg ₹21/kg
+ಉತ್ತಮ ದಿನ: ಬುಧವಾರ (*78 kg*)
+
+*ಗುಣಮಟ್ಟ / Quality:*
+Grade A: 68% → *212 kg*
+Grade B: 24% → *75 kg*
+Grade C: 8% → *25 kg*
+
+*ಗಮನಿಸಿದ ಸಮಸ್ಯೆ / Issues:*
+⚠️ Row 6: ಸಾರಜನಕ ಕೊರತೆ (N deficiency)
+⚠️ Row 2: Drip ಲೈನ್ ಪರಿಶೀಲಿಸಿ (ಒಣ ಪ್ರದೇಶ)
+✅ ಉಳಿದ ಎಲ್ಲ ಸಾಲು — ಆರೋಗ್ಯಕರ
+
+*ಮುಂದಿನ ವಾರ:*
+ಅಂದಾಜು: *~340 kg* (+9%)
+Focus: ಗುರುವಾರ peak harvest
+Action: ಮಂಗಳವಾರ Row 2 drip fix ಮಾಡಿ
+
+*ಈ ವಾರದ ಉಳಿತಾಯ / Savings:*
+ಕೂಲಿ ಉಳಿತಾಯ: *₹800*
+ರೋಗ ಮುಂಚಿತ ಪತ್ತೆ: *~₹4,000 ತಡೆಯಲಾಯಿತು*
+
+ಮುಂದಿನ ವಾರ ಯಾವುದಾದರೂ special focus ಬೇಕೇ? 🌱`
+  }
+];
+
+function renderScenarios() {
+  const el = document.getElementById('scenarios');
+  scenarios.forEach((s, i) => {
+    el.innerHTML += `<div class="scenario-card" id="sc${i}" onclick="runScenario(${i})">
+      <div class="sc-header">
+        <span class="sc-tag ${s.label}">${s.tag}</span>
+      </div>
+      <div class="sc-title">${s.title}</div>
+      <div class="sc-desc">${s.desc}</div>
+    </div>`;
+  });
+}
+
+let msgCount = 0;
+function addMsg(text, dir, sender='') {
+  msgCount++;
+  const msgs = document.getElementById('messages');
+  const t = timeStr(msgCount);
+  const div = document.createElement('div');
+  div.className = 'msg ' + dir;
+  const senderHtml = (dir==='in' && sender) ? '<div class="msg-sender">'+sender+'</div>' : '';
+  div.innerHTML = senderHtml + '<div class="bubble"></div><div class="msg-time">'+t+'</div>';
+  div.querySelector('.bubble').textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+let isRunning = false;
+
+function runScenario(i) {
+  if (isRunning) return;
+  isRunning = true;
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('sc'+i).classList.add('active');
+  const s = scenarios[i];
+  addMsg(s.farmer, 'out');
+  const typing = document.getElementById('typing');
+  typing.classList.add('show');
+  setTimeout(() => {
+    typing.classList.remove('show');
+    addMsg(s.bot, 'in', 'RaitaRanga 🌱');
+    isRunning = false;
+  }, 1800);
+}
+
+async function sendMsg() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addMsg(text, 'out');
+  const typing = document.getElementById('typing');
+  typing.classList.add('show');
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        system: `You are RaitaRanga (ರೈತರ ರಂಗ), a WhatsApp AI assistant for Karnataka tomato greenhouse farmers.
+LANGUAGE: Always reply in Kannada + English mixed. Write key advice in both Kannada script and English.
+Greet in Kannada. Give numbers and technical terms in English. Keep Kannada accessible and simple.
+Farm: Suresh Gowda, Kolar district, Karnataka. 500 sqm greenhouse, hybrid tomato, day 65, last harvest 45kg, price ₹18/kg Kolar APMC.
+Format: *bold* for numbers, emojis naturally, under 200 words. End with a helpful follow-up offer in both languages.`,
+        messages: [{ role: 'user', content: `Farmer message: ${text}` }]
+      })
+    });
+    const data = await resp.json();
+    typing.classList.remove('show');
+    const reply = data.content?.[0]?.text || 'ತಾಂತ್ರಿಕ ಸಮಸ್ಯೆ ಆಗಿದೆ. Technical issue, please try again! 🙏';
+    addMsg(reply, 'in', 'RaitaRanga 🌱');
+  } catch(e) {
+    typing.classList.remove('show');
+    addMsg('ಸಂಪರ್ಕ ಸಮಸ್ಯೆ ಆಗಿದೆ ಸುರೇಶ್ ಅವರೇ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ!\nConnection issue, please try again! 🙏', 'in', 'RaitaRanga 🌱');
+  }
+}
+
+function showTab(name, el) {
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+renderScenarios();
+
+async function sendPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const b64 = e.target.result.split(',')[1];
+    const mimeType = file.type || 'image/jpeg';
+    addMsg('[📷 ಸಸ್ಯ ಫೋಟೋ ಕಳಿಸಲಾಗಿದೆ / Plant photo sent for disease analysis]', 'out');
+    const typing = document.getElementById('typing');
+    typing.classList.add('show');
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 500,
+          system: `You are RaitaRanga (ರೈತರ ರಂಗ), a WhatsApp AI for Karnataka tomato farmers.
+LANGUAGE: Reply in Kannada + English mixed. Key diagnoses in both scripts.
+Farm: Suresh Gowda, Kolar district.
+The farmer sent a plant photo. Analyze for:
+1. ರೋಗ / Disease name (Kannada + English)
+2. ತೀವ್ರತೆ / Severity score 1-10
+3. ಚಿಕಿತ್ಸೆ / Treatment steps with product names available in Karnataka
+4. ವೆಚ್ಚ / Cost in rupees
+If not a plant, ask in Kannada + English to send a plant photo.
+Format: *bold* for key info, emojis, under 200 words.`,
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: mimeType, data: b64 } },
+            { type: 'text', text: 'Farmer sent this plant photo. Diagnose and advise in Kannada + English.' }
+          ]}]
+        })
+      });
+      const data = await resp.json();
+      typing.classList.remove('show');
+      const reply = data.content?.[0]?.text || 'ಫೋಟೋ ಸ್ವೀಕರಿಸಲಾಗಿದೆ! Photo received, analysing... 🌿';
+      addMsg(reply, 'in', 'RaitaRanga 🌱');
+    } catch(e) {
+      typing.classList.remove('show');
+      addMsg('ಫೋಟೋ ಸ್ವೀಕರಿಸಲಾಗಿದೆ ಆದರೆ ಸಂಪರ್ಕ ಸಮಸ್ಯೆ.\nPhoto received but connection issue — ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ / try again. 🙏', 'in', 'RaitaRanga 🌱');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>
