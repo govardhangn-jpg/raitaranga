@@ -59,10 +59,4 @@ def health():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-```
 
-After pasting, **scroll down** and click the green **"Commit changes"** button. Then click **"Commit directly to the main branch"** and click **"Commit changes"** again.
-
-Then watch your Render logs — within 1 minute you should see:
-```
-==> Your service is live 🎉
