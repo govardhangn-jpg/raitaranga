@@ -4,6 +4,10 @@ import os, base64, json
 from claude_agent import get_ai_response
 from farm_data import get_or_create_farm
 
+from weather import get_kolar_weather
+
+farm = get_or_create_farm(phone)
+farm['weather'] = get_kolar_weather()  # live weather!
 app = Flask(__name__)
 
 def get_twilio_client():
