@@ -10,6 +10,12 @@ farm = get_or_create_farm(phone)
 farm['weather'] = get_kolar_weather()  # live weather!
 app = Flask(__name__)
 
+
+from mandi_prices import get_mandi_prices
+
+prices = get_mandi_prices()
+kolar_price = prices.get('Kolar', {}).get('Grade A', 18)
+farm['price'] = kolar_price  # live price!
 def get_twilio_client():
     return Client(
         os.environ.get('TWILIO_ACCOUNT_SID', ''),
