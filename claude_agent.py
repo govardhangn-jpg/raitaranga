@@ -71,7 +71,7 @@ def get_ai_response(farmer_phone, message, farm_data, image_b64=None):
 
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
-            max_tokens=500,
+            max_tokens=800,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": content}]
         )
