@@ -10,18 +10,6 @@ farm = get_or_create_farm(phone)
 farm['weather'] = get_kolar_weather()  # live weather!
 app = Flask(__name__)
 
-
-from mandi_prices import get_mandi_prices
-
-prices = get_mandi_prices()
-kolar_price = prices.get('Kolar', {}).get('Grade A', 18)
-farm['price'] = kolar_price  # live price!
-def get_twilio_client():
-    return Client(
-        os.environ.get('TWILIO_ACCOUNT_SID', ''),
-        os.environ.get('TWILIO_AUTH_TOKEN', '')
-    )
-
 @app.route('/webhook', methods=['POST'])
 def whatsapp_webhook():
     phone    = request.form.get('From')
@@ -44,6 +32,19 @@ def whatsapp_webhook():
         farm_data=farm,
         image_b64=image_b64
     )
+
+    from mandi_prices import get_mandi_prices
+
+prices = get_mandi_prices()
+kolar_price = prices.get('Kolar', {}).get('Grade A', 18)
+farm['price'] = kolar_price  # live price!
+
+def get_twilio_client():
+    return Client(
+        os.environ.get('TWILIO_ACCOUNT_SID', ''),
+        os.environ.get('TWILIO_AUTH_TOKEN', '')
+    )
+
 
     # In production: send via Twilio. In test: just return reply
     if os.environ.get('TESTING'):
