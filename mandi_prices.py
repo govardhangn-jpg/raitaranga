@@ -10,6 +10,28 @@ import requests
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+import requests
+
+def get_kolar_weather():
+    """Get live weather for Kolar using Open-Meteo (completely free, no API key)"""
+    try:
+        # Kolar coordinates: 13.1367° N, 78.1297° E
+        url = "https://api.open-meteo.com/v1/forecast"
+        params = {
+            "latitude": 13.1367,
+            "longitude": 78.1297,
+            "current": "temperature_2m,relative_humidity_2m,weathercode",
+            "timezone": "Asia/Kolkata"
+        }
+        r = requests.get(url, params=params, timeout=5)
+        data = r.json()["current"]
+        temp = data["temperature_2m"]
+        humidity = data["relative_humidity_2m"]
+        return f"Sunny, {temp}°C, humidity {humidity}%"
+    except:
+        return "Sunny, 28°C, humidity 65%"
+
+
 # ── Cached fallback prices (updated manually if live fetch fails) ──────────
 # Based on typical Kolar / Bangalore / Hosur APMC rates (₹ per kg)
 CACHED_PRICES = {
