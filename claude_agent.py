@@ -41,7 +41,7 @@ def get_ai_response(farmer_phone, message, farm_data, image_b64=None):
         farm_ctx = json.dumps({
             "farm_name": farm_data.get('name', 'Unknown Farm'),
             "location": farm_data.get('location', 'Karnataka'),
-            "greenhouse_size": farm_data.get('size_sqm', 500),
+            "greenhouse_size": farm_data.get('size_sqm', 800),
             "rows": farm_data.get('rows', 10),
             "variety": farm_data.get('tomato_variety', 'Hybrid'),
             "days_since_planting": farm_data.get('days', 60),
